@@ -1,0 +1,6 @@
+requests
+tenacity
+pandas
+pyarrow
+python-dotenv
+pytest
