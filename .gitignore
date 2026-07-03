@@ -4,3 +4,4 @@ venv/
 *.pyc
 data/raw/
 .DS_Store
+# ignore 
