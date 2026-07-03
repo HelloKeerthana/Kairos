@@ -1,11 +1,11 @@
-# DevPulse — Engineering Analytics & DORA Metrics Platform
+# kairos — Engineering Analytics & DORA Metrics Platform
 ### Complete Project Specification & Build Guide
 
 ---
 
 ## 1. What This Project Is (Elevator Pitch)
 
-DevPulse is a self-hosted data platform that pulls raw activity data from GitHub (commits, pull requests, reviews, issues, CI/CD runs), moves it through a proper ETL pipeline into a data warehouse, computes industry-standard engineering metrics (DORA metrics + custom risk indicators), visualizes them on live dashboards, detects anomalies automatically, and uses an LLM-based agent to generate a plain-English weekly report — posted automatically to Slack or email.
+kairos is a self-hosted data platform that pulls raw activity data from GitHub (commits, pull requests, reviews, issues, CI/CD runs), moves it through a proper ETL pipeline into a data warehouse, computes industry-standard engineering metrics (DORA metrics + custom risk indicators), visualizes them on live dashboards, detects anomalies automatically, and uses an LLM-based agent to generate a plain-English weekly report — posted automatically to Slack or email.
 
 In one sentence for a resume/interview: **"I built an end-to-end data engineering platform that turns raw GitHub activity into automated, AI-summarized engineering health reports."**
 
@@ -15,7 +15,7 @@ It is deliberately designed so that almost every sentence in a typical Data Anal
 
 ## 2. Core Concepts & Definitions (so you can talk about it fluently)
 
-| Term | Definition | Where it shows up in DevPulse |
+| Term | Definition | Where it shows up in kairos |
 |---|---|---|
 | **ETL / ELT** | Extract-Transform-Load (transform before loading) vs Extract-Load-Transform (transform inside warehouse) | You'll do ELT: land raw JSON, transform inside the warehouse using SQL/dbt-style models |
 | **Orchestration** | Scheduling and managing dependencies between data tasks | Apache Airflow DAGs |
@@ -337,7 +337,8 @@ services:
   airflow-scheduler:
   airflow-init:      # one-off DB migration/user creation
   grafana:
-  devpulse-extractor:  # your Python extraction/transform app
+  kairos
+-extractor:  # your Python extraction/transform app
 ```
 
 ### Key details to actually implement
@@ -442,7 +443,7 @@ SQL (window functions, CTEs, joins, aggregation) · Python (OOP, API integration
 
 ## 15. Resume Bullets (ready to drop into your Projects section)
 
-> **DevPulse — Engineering Analytics & DORA Metrics Platform** | Python, SQL, Apache Airflow, PySpark, Snowflake/PostgreSQL, Docker, Grafana, LLM API
+> **kairos — Engineering Analytics & DORA Metrics Platform** | Python, SQL, Apache Airflow, PySpark, Snowflake/PostgreSQL, Docker, Grafana, LLM API
 > - Designed and built an end-to-end ELT pipeline ingesting GitHub REST/GraphQL API data (commits, PRs, reviews, CI/CD runs) through Airflow-orchestrated DAGs into a star-schema data warehouse, computing all four DORA metrics across tracked repositories
 > - Implemented statistical and ML-based anomaly detection (Z-score, Isolation Forest) on review turnaround, CI reliability, and code churn to automatically flag engineering-process risks
 > - Built an LLM-powered agent that gathers pipeline metrics, reasons over week-over-week deltas, and generates guardrailed, auto-delivered engineering health reports via Slack
@@ -463,7 +464,7 @@ SQL (window functions, CTEs, joins, aggregation) · Python (OOP, API integration
 
 ## 17. Quick-Start Checklist (do this first, today)
 
-1. `mkdir devpulse && cd devpulse && git init`
+1. `mkdir kairos && cd kairos && git init`
 2. Create `docker-compose.yml` with just Postgres + Airflow (get this running before writing any extractor code)
 3. Create a GitHub fine-grained PAT with read-only repo access, store in `.env`
 4. Write `extractors/fetch_pull_requests.py` — get ONE repo's PR data printing to console

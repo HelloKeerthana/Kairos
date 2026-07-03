@@ -1,4 +1,4 @@
-# DevPulse — Step 1 to Step N (Complete Build Sequence)
+# Kairos — Step 1 to Step N (Complete Build Sequence)
 
 Every step below is one atomic action. Do them in order. Each step has the same shape: **Step number → Action → Why/Detail**. N = 148 (the project is complete and demo-ready at Step 148).
 
@@ -12,7 +12,7 @@ Everything in this project runs in containers — this is the one non-negotiable
 **Step 2: Install Python 3.11+ locally.**
 Needed to run extractor/transform scripts outside containers during development, and for your local virtual environment.
 
-**Step 3: Create the project root folder: `mkdir devpulse && cd devpulse`.**
+**Step 3: Create the project root folder: `mkdir Kairos && cd Kairos`.**
 This is your single repository root.
 
 **Step 4: Initialize git: `git init`.**
@@ -309,7 +309,7 @@ Confirms the orchestration layer itself works before adding your DAG.
 **Step 89: Mount your local `dags/` folder into the Airflow containers via a volume in `docker-compose.yml`.**
 Lets you edit DAG files locally and have Airflow pick them up automatically.
 
-**Step 90: Create `dags/devpulse_pipeline.py` with a basic DAG skeleton (`dag_id`, `schedule_interval`, `start_date`, `catchup=False`).**
+**Step 90: Create `dags/Kairos_pipeline.py` with a basic DAG skeleton (`dag_id`, `schedule_interval`, `start_date`, `catchup=False`).**
 Skeleton before logic.
 
 **Step 91: Add a `PythonOperator` task calling `fetch_pull_requests.py`'s main function.**
@@ -377,7 +377,7 @@ Confirm the service runs before configuring anything.
 **Step 109: Add your Postgres warehouse as a Data Source inside Grafana (Connections → Data Sources → PostgreSQL), pointing at the warehouse database (not the Airflow metadata one).**
 Connects visualization to your actual data.
 
-**Step 110: Create a new Dashboard called "DevPulse — Engineering Health."**
+**Step 110: Create a new Dashboard called "Kairos — Engineering Health."**
 Container for all panels.
 
 **Step 111: Add a "Stat" panel for current-week Deployment Frequency, querying the `v_dora_deployment_frequency` view.**
@@ -501,7 +501,7 @@ A short demo video is disproportionately persuasive — link it in your README a
 **Step 145: Write a short `docs/ARCHITECTURE.md` explaining each design decision (why star schema, why Airflow, why the guardrails on the agent) — this becomes your interview cheat sheet.**
 Forces you to articulate the "why," which is what interviewers actually probe for.
 
-**Step 146: Push the full repository to GitHub as a public repo with a clear name (`devpulse` or `devpulse-analytics`), add topics/tags (`data-engineering`, `airflow`, `dora-metrics`, `genai`), and pin it on your GitHub profile.**
+**Step 146: Push the full repository to GitHub as a public repo with a clear name (`Kairos` or `Kairos-analytics`), add topics/tags (`data-engineering`, `airflow`, `dora-metrics`, `genai`), and pin it on your GitHub profile.**
 Discoverability and presentation — this is the artifact a recruiter will actually click into.
 
 ---
@@ -516,4 +516,4 @@ Demonstrates orchestration beyond Compose — the final, most advanced stretch c
 
 ---
 
-**N = 148. At this point DevPulse is a complete, tested, documented, containerized, orchestrated, AI-augmented data platform — ready to be Project #1 on your resume.**
+**N = 148. At this point Kairos is a complete, tested, documented, containerized, orchestrated, AI-augmented data platform — ready to be Project #1 on your resume.**
