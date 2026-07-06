@@ -1,6 +1,7 @@
 import pandas as pd
 from extractors.github_client import GitHubClient
 from extractors.config import REPO_OWNER, REPO_NAME
+from extractors.data_quality import validate_pull_requests
 
 def fetch_pull_requests():
     client = GitHubClient()
@@ -46,6 +47,7 @@ def fetch_pull_requests():
 
 if __name__ == "__main__":
     df = fetch_pull_requests()
+    validate_pull_requests(df)
     print(df.head())
     print(f"\nTotal PRs fetched: {len(df)}")
 

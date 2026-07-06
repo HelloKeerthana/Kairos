@@ -1,6 +1,8 @@
 import pandas as pd
 from extractors.github_client import GitHubClient
 from extractors.config import REPO_OWNER, REPO_NAME
+from extractors.data_quality import validate_commits
+
 
 def fetch_commits():
     client = GitHubClient()
@@ -28,6 +30,7 @@ def fetch_commits():
 
 if __name__ == "__main__":
     df = fetch_commits()
+    validate_commits(df)
     print(df.head())
     print(f"\nTotal commits fetched: {len(df)}")
     df.to_parquet("data/raw/commits.parquet", index=False)
