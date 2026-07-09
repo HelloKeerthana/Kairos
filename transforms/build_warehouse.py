@@ -29,6 +29,16 @@ CREATE TABLE IF NOT EXISTS warehouse.fact_pull_requests (
     deletions INT,
     changed_files INT
 );
+CREATE TABLE IF NOT EXISTS warehouse.fact_deployments (
+    deployment_key BIGINT PRIMARY KEY,
+    repo_key INT REFERENCES warehouse.dim_repo(repo_key),
+    run_started_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    status TEXT,
+    conclusion TEXT,
+    is_failure BOOLEAN,
+    duration_seconds NUMERIC
+);
 """
 
 def main():
