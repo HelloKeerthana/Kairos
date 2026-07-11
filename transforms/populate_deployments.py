@@ -7,14 +7,14 @@ def populate():
     engine = get_engine()
     repo_name = f"{REPO_OWNER}/{REPO_NAME}"
 
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         repo_key = conn.execute(text(
             "SELECT repo_key FROM warehouse.dim_repo WHERE repo_name = :repo_name"
         ), {"repo_name": repo_name}).scalar()
 
     runs_df = pd.read_sql("SELECT * FROM staging.stg_workflow_runs", engine)
 
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         for _, row in runs_df.iterrows():
             started = pd.to_datetime(row["run_started_at"])
             updated = pd.to_datetime(row["updated_at"])
@@ -39,7 +39,7 @@ def populate():
                 "is_failure": is_failure,
                 "duration": duration,
             })
-        conn.commit()
+
     print(f"Loaded {len(runs_df)} deployments into warehouse.fact_deployments")
 
 if __name__ == "__main__":

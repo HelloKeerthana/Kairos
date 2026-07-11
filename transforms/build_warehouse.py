@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS warehouse.fact_pull_requests (
     deletions INT,
     changed_files INT
 );
+
 CREATE TABLE IF NOT EXISTS warehouse.fact_deployments (
     deployment_key BIGINT PRIMARY KEY,
     repo_key INT REFERENCES warehouse.dim_repo(repo_key),
@@ -39,13 +40,26 @@ CREATE TABLE IF NOT EXISTS warehouse.fact_deployments (
     is_failure BOOLEAN,
     duration_seconds NUMERIC
 );
+
+CREATE TABLE IF NOT EXISTS warehouse.anomalies (
+    id SERIAL PRIMARY KEY,
+    metric_name TEXT,
+    repo_name TEXT,
+    date DATE,
+    value NUMERIC,
+    expected_min NUMERIC,
+    expected_max NUMERIC,
+    severity TEXT,
+    detected_at TIMESTAMP DEFAULT NOW()
+);
 """
 
 def main():
     engine = get_engine()
-    with engine.connect() as conn:
+
+    with engine.begin() as conn:
         conn.execute(text(DDL))
-        conn.commit()
+
     print("Warehouse schema created.")
 
 if __name__ == "__main__":

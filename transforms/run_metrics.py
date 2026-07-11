@@ -6,12 +6,13 @@ def main():
         sql = f.read()
 
     engine = get_engine()
-    with engine.connect() as conn:
+
+    with engine.begin() as conn:
         for statement in sql.split(";"):
             statement = statement.strip()
             if statement:
                 conn.execute(text(statement))
-        conn.commit()
+
     print("Metric views created.")
 
 if __name__ == "__main__":

@@ -7,14 +7,13 @@ def populate():
     engine = get_engine()
     repo_name = f"{REPO_OWNER}/{REPO_NAME}"
 
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         # 1. Insert repo into dim_repo (idempotent upsert)
         conn.execute(text("""
             INSERT INTO warehouse.dim_repo (repo_name)
             VALUES (:repo_name)
             ON CONFLICT (repo_name) DO NOTHING
         """), {"repo_name": repo_name})
-        conn.commit()
 
         repo_key = conn.execute(text(
             "SELECT repo_key FROM warehouse.dim_repo WHERE repo_name = :repo_name"
@@ -23,7 +22,7 @@ def populate():
     # 2. Load staging PRs
     pr_df = pd.read_sql("SELECT * FROM staging.stg_pull_requests", engine)
 
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         for _, row in pr_df.iterrows():
             # upsert contributor
             conn.execute(text("""
@@ -31,6 +30,7 @@ def populate():
                 VALUES (:username)
                 ON CONFLICT (username) DO NOTHING
             """), {"username": row["author"]})
+
             author_key = conn.execute(text(
                 "SELECT contributor_key FROM warehouse.dim_contributor WHERE username = :username"
             ), {"username": row["author"]}).scalar()
@@ -65,7 +65,6 @@ def populate():
                 "deletions": int(row["deletions"]) if pd.notna(row["deletions"]) else None,
                 "changed_files": int(row["changed_files"]) if pd.notna(row["changed_files"]) else None,
             })
-        conn.commit()
 
     print("Warehouse populated.")
 

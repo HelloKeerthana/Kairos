@@ -1,5 +1,7 @@
 import pandas as pd
 from transforms.db import get_engine
+from sqlalchemy import text
+
 
 def load_table(parquet_path: str, table_name: str, engine):
     df = pd.read_parquet(parquet_path)
@@ -9,10 +11,8 @@ def load_table(parquet_path: str, table_name: str, engine):
 def main():
     engine = get_engine()
 
-    with engine.connect() as conn:
-        from sqlalchemy import text
-        conn.execute(text("CREATE SCHEMA IF NOT EXISTS staging"))
-        conn.commit()
+    with engine.begin() as conn:
+       conn.execute(text("CREATE SCHEMA IF NOT EXISTS staging"))
 
     load_table("data/raw/pull_requests.parquet", "stg_pull_requests", engine)
     load_table("data/raw/commits.parquet", "stg_commits", engine)

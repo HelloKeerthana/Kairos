@@ -1,12 +1,13 @@
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
 DB_USER = "kairos"
 DB_PASSWORD = "kairos_pass"
-DB_HOST = "localhost"
-DB_PORT = "5433"
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "5433")
 DB_NAME = "kairos_db"
 
 def get_engine():
