@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: kairos_pass
       POSTGRES_DB: kairos_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -16,5 +16,88 @@ services:
       timeout: 5s
       retries: 5
 
+  airflow-init:
+    image: apache/airflow:2.9.3
+    container_name: kairos-airflow-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://kairos:kairos_pass@postgres/kairos_db
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__WEBSERVER__SECRET_KEY: "kairos-local-dev-secret-key-change-me"
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./extractors:/opt/airflow/extractors
+      - ./transforms:/opt/airflow/transforms
+
+  airflow-webserver:
+    image: apache/airflow:2.9.3
+    container_name: kairos-airflow-webserver
+    depends_on:
+      - airflow-init
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://kairos:kairos_pass@postgres/kairos_db
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas pyarrow requests tenacity python-dotenv psycopg2-binary sqlalchemy"
+      AIRFLOW__WEBSERVER__SECRET_KEY: "kairos-local-dev-secret-key-change-me"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./extractors:/opt/airflow/extractors
+      - ./transforms:/opt/airflow/transforms
+      - ./.env:/opt/airflow/.env
+    command: webserver
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.3
+    container_name: kairos-airflow-scheduler
+    depends_on:
+      - airflow-init
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://kairos:kairos_pass@postgres/kairos_db
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas pyarrow requests tenacity python-dotenv psycopg2-binary sqlalchemy"
+      AIRFLOW__WEBSERVER__SECRET_KEY: "kairos-local-dev-secret-key-change-me"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./extractors:/opt/airflow/extractors
+      - ./transforms:/opt/airflow/transforms
+      - ./.env:/opt/airflow/.env
+    command: scheduler
+  
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: kairos-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:
+  grafana_data:
