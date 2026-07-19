@@ -59,7 +59,7 @@ everything runs in Docker. Airflow handles orchestration (two DAGs — one daily
                     │  stg_commits, stg_pull_requests,   │
                     │  stg_reviews, stg_workflow_runs    │
                     └────────────┬─────────────────────┘
-                                 │ (4) TRANSFORM (SQL / PySpark / dbt)
+                                 │ (4) TRANSFORM (PostGres)
                                  ▼
                     ┌─────────────────────────────────┐
                     │  Warehouse — Star Schema           │
