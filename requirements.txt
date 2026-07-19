@@ -7,3 +7,5 @@ python-dotenv
 pytest
 psycopg2-binary
 sqlalchemy
+google-genai
+# anthropic
