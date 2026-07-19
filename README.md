@@ -76,6 +76,7 @@ trigger `kairos_etl_pipeline` first, then `kairos_weekly_digest`.
 - MTTR is stubbed — needs a failed deployment to measure recovery time from, and my test CI has been mostly green
 - review turnaround time has no data — my test PRs didn't have a second reviewer
 - currently pointed at a small test repo, but works against any repo, just swap the `.env` values
+  the repo --> https://github.com/HelloKeerthana/test-repo
 
 ## what i'd do differently with more time
 
