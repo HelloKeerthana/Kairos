@@ -58,6 +58,7 @@ services:
       - "8080:8080"
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./agent:/opt/airflow/agent
       - ./data:/opt/airflow/data
       - ./extractors:/opt/airflow/extractors
       - ./transforms:/opt/airflow/transforms
@@ -79,6 +80,7 @@ services:
       AIRFLOW__WEBSERVER__SECRET_KEY: "kairos-local-dev-secret-key-change-me"
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./agent:/opt/airflow/agent
       - ./data:/opt/airflow/data
       - ./extractors:/opt/airflow/extractors
       - ./transforms:/opt/airflow/transforms
