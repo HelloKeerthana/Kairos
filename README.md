@@ -104,7 +104,7 @@ extract → validate → load → build warehouse → populate → compute metri
 **2. everything's containerized**
 
 one `docker compose up` and the whole stack comes alive — Postgres, Airflow, Grafana, all of it.
-<img width="962" height="155" alt="image" src="https://github.com/user-attachments/assets/284f2f97-7d54-4983-a94a-197d317998ec" />
+
 <img width="1526" height="47" alt="docker container row" src="https://github.com/user-attachments/assets/e20e5e0e-6b35-4185-9433-3b3cc67de68f" />
 <img width="1600" height="132" alt="docker compose ps output" src="https://github.com/user-attachments/assets/79e448ea-d30f-48e9-bbcb-94e87e7b7fa8" />
 <img width="707" height="1132" alt="docker desktop container list" src="https://github.com/user-attachments/assets/32e75570-c53c-4e4c-8372-86f1579c4217" />
