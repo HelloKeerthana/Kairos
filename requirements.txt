@@ -8,4 +8,5 @@ pytest
 psycopg2-binary
 sqlalchemy
 google-genai
-# anthropic
+black
+ruff
