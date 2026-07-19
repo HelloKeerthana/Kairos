@@ -1,6 +1,7 @@
 from sqlalchemy import text
 from transforms.db import get_engine
 
+
 def main():
     with open("transforms/metrics.sql", "r") as f:
         sql = f.read()
@@ -14,6 +15,7 @@ def main():
                 conn.execute(text(statement))
 
     print("Metric views created.")
+
 
 if __name__ == "__main__":
     main()

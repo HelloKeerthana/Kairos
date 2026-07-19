@@ -1,12 +1,14 @@
 import pandas as pd
-import numpy as np
 from sqlalchemy import text
 from transforms.db import get_engine
+
 
 def detect_zscore_anomalies(df: pd.DataFrame, value_col: str, threshold: float = 2.5):
     """Flag rows where value is more than `threshold` std devs from the mean."""
     if len(df) < 3:
-        print(f"Not enough data points ({len(df)}) for reliable z-score detection — skipping.")
+        print(
+            f"Not enough data points ({len(df)}) for reliable z-score detection — skipping."
+        )
         return pd.DataFrame()
 
     mean = df[value_col].mean()
@@ -25,13 +27,18 @@ def detect_zscore_anomalies(df: pd.DataFrame, value_col: str, threshold: float =
     return anomalies.assign(
         expected_min=mean - threshold * std,
         expected_max=mean + threshold * std,
-        severity=anomalies["z_score"].abs().apply(lambda z: "high" if z > 3.5 else "medium"),
+        severity=anomalies["z_score"]
+        .abs()
+        .apply(lambda z: "high" if z > 3.5 else "medium"),
     )
+
 
 def detect_iqr_anomalies(df: pd.DataFrame, value_col: str):
     """Flag rows outside Q1 - 1.5*IQR / Q3 + 1.5*IQR — more robust to masking than z-score on small samples."""
     if len(df) < 4:
-        print(f"Not enough data points ({len(df)}) for reliable IQR detection — skipping.")
+        print(
+            f"Not enough data points ({len(df)}) for reliable IQR detection — skipping."
+        )
         return pd.DataFrame()
 
     q1 = df[value_col].quantile(0.25)
@@ -51,6 +58,7 @@ def detect_iqr_anomalies(df: pd.DataFrame, value_col: str):
         expected_max=upper,
         severity="medium",
     )
+
 
 def run_detection():
     engine = get_engine()
@@ -86,27 +94,44 @@ def run_detection():
         print("No CI duration anomalies detected.")
         return
 
-    anomalies = pd.concat(frames).drop_duplicates(subset=["date", "repo_name", "duration_seconds"])
+    anomalies = pd.concat(frames).drop_duplicates(
+        subset=["date", "repo_name", "duration_seconds"]
+    )
 
     print(f"Found {len(anomalies)} anomalies:")
-    print(anomalies[["repo_name", "date", "duration_seconds", "expected_min", "expected_max", "severity"]])
+    print(
+        anomalies[
+            [
+                "repo_name",
+                "date",
+                "duration_seconds",
+                "expected_min",
+                "expected_max",
+                "severity",
+            ]
+        ]
+    )
 
     with engine.begin() as conn:
         for _, row in anomalies.iterrows():
-            conn.execute(text("""
+            conn.execute(
+                text("""
                 INSERT INTO warehouse.anomalies
                 (metric_name, repo_name, date, value, expected_min, expected_max, severity)
                 VALUES ('ci_run_duration_seconds', :repo_name, :date, :value, :emin, :emax, :severity)
-            """), {
-                "repo_name": row["repo_name"],
-                "date": row["date"],
-                "value": row["duration_seconds"],
-                "emin": float(row["expected_min"]),
-                "emax": float(row["expected_max"]),
-                "severity": row["severity"],
-            })
+            """),
+                {
+                    "repo_name": row["repo_name"],
+                    "date": row["date"],
+                    "value": row["duration_seconds"],
+                    "emin": float(row["expected_min"]),
+                    "emax": float(row["expected_max"]),
+                    "severity": row["severity"],
+                },
+            )
 
     print(f"Inserted {len(anomalies)} CI duration anomalies into warehouse.anomalies.")
+
 
 if __name__ == "__main__":
     run_detection()

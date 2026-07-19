@@ -4,12 +4,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def post_to_slack(report_text: str):
     """Send the digest report to Slack via Incoming Webhook."""
     webhook_url = os.getenv("SLACK_WEBHOOK_URL")
 
     if not webhook_url:
-        print("[WARNING] No SLACK_WEBHOOK_URL set — skipping delivery, printing instead:")
+        print(
+            "[WARNING] No SLACK_WEBHOOK_URL set — skipping delivery, printing instead:"
+        )
         print(report_text)
         return False
 

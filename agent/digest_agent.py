@@ -8,6 +8,7 @@ from agent.prompts import SYSTEM_PROMPT, build_user_prompt
 
 load_dotenv()
 
+
 class DigestAgent:
     def __init__(self):
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -47,7 +48,9 @@ class DigestAgent:
         numbers_in_context = set(re.findall(r"\d+\.?\d*", context_str))
 
         unverified = numbers_in_report - numbers_in_context
-        suspicious = [n for n in unverified if len(n) > 1 and n not in numbers_in_context]
+        suspicious = [
+            n for n in unverified if len(n) > 1 and n not in numbers_in_context
+        ]
 
         if suspicious:
             return False, f"Unverified numbers in report: {suspicious}"
@@ -69,7 +72,9 @@ class DigestAgent:
         if anomalies:
             lines.append("\n### Anomalies")
             for a in anomalies:
-                lines.append(f"- {a['metric_name']} on {a['date']}: value={a['value']} (expected {a['expected_min']}-{a['expected_max']}, severity={a['severity']})")
+                lines.append(
+                    f"- {a['metric_name']} on {a['date']}: value={a['value']} (expected {a['expected_min']}-{a['expected_max']}, severity={a['severity']})"
+                )
 
         return "\n".join(lines)
 
@@ -93,6 +98,6 @@ class DigestAgent:
 if __name__ == "__main__":
     agent = DigestAgent()
     report = agent.run()
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print(report)
-    print("="*60)
+    print("=" * 60)

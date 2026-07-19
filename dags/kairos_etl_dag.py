@@ -70,5 +70,16 @@ with DAG(
     # Dependencies: all extracts run in parallel first,
     # reviews depends on PRs already existing (needs pull_requests.parquet)
     extract_prs >> extract_reviews
-    [extract_prs, extract_commits, extract_reviews, extract_workflow_runs] >> load_staging
-    load_staging >> build_warehouse >> populate_warehouse >> populate_deployments >> run_metrics
+    [
+        extract_prs,
+        extract_commits,
+        extract_reviews,
+        extract_workflow_runs,
+    ] >> load_staging
+    (
+        load_staging
+        >> build_warehouse
+        >> populate_warehouse
+        >> populate_deployments
+        >> run_metrics
+    )

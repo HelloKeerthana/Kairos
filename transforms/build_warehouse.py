@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS warehouse.anomalies (
 );
 """
 
+
 def main():
     engine = get_engine()
 
@@ -61,6 +62,7 @@ def main():
         conn.execute(text(DDL))
 
     print("Warehouse schema created.")
+
 
 if __name__ == "__main__":
     main()

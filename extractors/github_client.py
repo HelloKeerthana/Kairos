@@ -5,6 +5,7 @@ from extractors.config import GITHUB_TOKEN
 
 BASE_URL = "https://api.github.com"
 
+
 class GitHubClient:
     def __init__(self):
         self.headers = {

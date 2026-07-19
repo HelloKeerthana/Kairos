@@ -20,8 +20,10 @@ Any anomalies or concerning patterns, referencing the anomalies data if present.
 One concrete, actionable suggestion based on the data.
 """
 
+
 def build_user_prompt(context: dict) -> str:
     import json
+
     return f"""Here is this week's engineering data as JSON:
 
 {json.dumps(context, indent=2, default=str)}
