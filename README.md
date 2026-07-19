@@ -21,6 +21,77 @@ everything runs in Docker. Airflow handles orchestration (two DAGs — one daily
 
 **stack:** Python, SQL, Apache Airflow, PostgreSQL, Grafana, Docker Compose, Gemini API, pytest
 
+**arch**
+
+                         ┌─────────────────────────┐
+                         │   GitHub REST/GraphQL    │
+                         │   API (source system)    │
+                         └────────────┬─────────────┘
+                                      │ (1) EXTRACT
+                                      ▼
+                    ┌─────────────────────────────────┐
+                    │  Python Extractor Scripts        │
+                    │  - fetch_commits.py               │
+                    │  - fetch_pull_requests.py          │
+                    │  - fetch_reviews.py                │
+                    │  - fetch_issues.py                 │
+                    │  - fetch_workflow_runs.py (CI/CD)  │
+                    └────────────┬─────────────────────┘
+                                 │ raw JSON
+                                 ▼
+                    ┌─────────────────────────────────┐
+                    │  Landing Zone (raw storage)       │
+                    │  Local: /data/raw/*.parquet       │
+                    │  Cloud: S3 / GCS bucket            │
+                    └────────────┬─────────────────────┘
+                                 │ (2) ORCHESTRATED by Airflow DAG
+                                 ▼
+                    ┌─────────────────────────────────┐
+                    │  Data Quality Checks              │
+                    │  - schema validation                │
+                    │  - null/row-count checks            │
+                    │  - freshness checks                 │
+                    └────────────┬─────────────────────┘
+                                 │ (3) LOAD (raw → staging)
+                                 ▼
+                    ┌─────────────────────────────────┐
+                    │  Staging Tables (warehouse)       │
+                    │  stg_commits, stg_pull_requests,   │
+                    │  stg_reviews, stg_workflow_runs    │
+                    └────────────┬─────────────────────┘
+                                 │ (4) TRANSFORM (SQL / PySpark / dbt)
+                                 ▼
+                    ┌─────────────────────────────────┐
+                    │  Warehouse — Star Schema           │
+                    │  fact_pull_requests                │
+                    │  fact_deployments                  │
+                    │  fact_reviews                      │
+                    │  dim_repo / dim_contributor / dim_date │
+                    └───────┬─────────────────┬───────┘
+                            │                 │
+              (5a)          ▼                 ▼          (5b)
+        ┌───────────────────────┐   ┌─────────────────────────┐
+        │  Metrics Layer          │   │  Anomaly Detection Layer  │
+        │  - DORA metrics SQL     │   │  - Isolation Forest         │
+        │  - churn / bus factor   │   │  - Z-score on review time    │
+        │  - review turnaround    │   │  - Build failure spike flag  │
+        └───────────┬────────────┘   └────────────┬─────────────┘
+                    │                              │
+                    ▼                              ▼
+        ┌────────────────────┐         ┌────────────────────────┐
+        │  Grafana Dashboards  │         │  Weekly Digest Agent     │
+        │  (real-time viz)      │         │  (LLM reasoning + report) │
+        └────────────────────┘         └────────────┬────────────┘
+                                                     │ (6) DELIVER
+                                                     ▼
+                                        ┌────────────────────────┐
+                                        │  Slack / Email Report     │
+                                        └────────────────────────┘
+
+All services above (except GitHub itself) run as Docker containers,
+orchestrated via docker-compose.yml, with Airflow as the scheduler/conductor.
+
+
 ## the pipeline, start to finish
 
 **1. Airflow runs the daily pipeline**
