@@ -52,7 +52,7 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://kairos:kairos_pass@postgres/kairos_db
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas pyarrow requests tenacity python-dotenv psycopg2-binary sqlalchemy"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas pyarrow requests tenacity python-dotenv psycopg2-binary sqlalchemy google-genai"
       AIRFLOW__WEBSERVER__SECRET_KEY: "kairos-local-dev-secret-key-change-me"
     ports:
       - "8080:8080"
@@ -75,7 +75,7 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://kairos:kairos_pass@postgres/kairos_db
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas pyarrow requests tenacity python-dotenv psycopg2-binary sqlalchemy"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas pyarrow requests tenacity python-dotenv psycopg2-binary sqlalchemy google-genai"
       AIRFLOW__WEBSERVER__SECRET_KEY: "kairos-local-dev-secret-key-change-me"
     volumes:
       - ./dags:/opt/airflow/dags
