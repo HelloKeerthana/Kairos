@@ -4,7 +4,9 @@ import os
 
 load_dotenv()
 
-DB_USER = "kairos"
+# change creds per your config
+
+DB_USER = "kairos"  
 DB_PASSWORD = "kairos_pass"
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5433")
