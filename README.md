@@ -1,5 +1,4 @@
 # Kairos
-<i>(Blog incoming ...)</i>
 
 
 Kairos is a self-hosted data platform that pulls raw GitHub activity (commits, PRs, reviews, CI/CD runs), runs it through an orchestrated pipeline into a Postgres warehouse, computes DORA metrics and a few custom engineering health signals, flags anomalies, puts it all on a live Grafana dashboard, and has an AI agent that writes a weekly digest and posts it to Slack on its own.
